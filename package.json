@@ -1,5 +1,5 @@
 {
-  "name": "pettier",
+  "name": "@pettier/pettier",
   "version": "0.0.1",
   "description": "Makes you feel bad about your code",
   "main": "index.js",
@@ -17,10 +17,8 @@
   },
   "homepage": "https://github.com/hsubox76/pettier#readme",
   "dependencies": {
-    "@babel/generator": "^7.2.2",
     "@babel/parser": "^7.2.3",
     "@babel/traverse": "^7.2.3",
-    "@babel/types": "^7.2.2",
     "fs-extra": "^7.0.1"
   }
 }

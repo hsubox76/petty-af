@@ -1,57 +1,44 @@
 const parser = require('@babel/parser');
 const traverse = require('@babel/traverse').default;
-const generate = require('@babel/generator').default;
-const t = require('@babel/types');
 const fs = require('fs-extra');
+const countCallbacks = require('./countCallbacks');
 
-function locToString(loc) {
-    return [
-        loc.start.line,
-        loc.start.column,
-        loc.end.line,
-        loc.end.column
-    ].join('-');
-}
-
-function findDepth(path) {
-    let parentPath = path.parentPath;
-    let expressionCount = 0;
-    while (parentPath && parentPath.node.type !== 'Program') {
-        if (parentPath.node.type === 'CallExpression') {
-            expressionCount++;
+function insertComments(originalCode, newCommentMap) {
+    let codeLines = originalCode.split('\n');
+    let newCodeLines = [];
+    codeLines.forEach((originalLine, index) => {
+        let offset = 1;
+        if (newCommentMap[index + offset]) {
+            const comments = newCommentMap[index + offset];
+            const indentMatch = originalLine.match(/^(\s*)[^s]/);
+            const indent = indentMatch ? indentMatch[1] : '';
+            comments.forEach(comment => {
+                newCodeLines.push(`${indent}// ${comment}`);
+                offset++;
+            });
         }
-        parentPath = parentPath.parentPath;
-    }
-    return expressionCount;
+        newCodeLines.push(originalLine);
+    });
+    return newCodeLines.join('\n');
 }
 
 async function main() {
-    let file;
+    let originalCode;
     try {
-        file = await fs.readFile(__dirname + '/../testdata/testcode.js', 'utf8');
+        originalCode = await fs.readFile(__dirname + '/../testdata/testcode.js', 'utf8');
     } catch(e) {
         console.error(e);
     }
-    if (file) {
-        const deepCbs = {};
-        const ast = parser.parse(file);
+    if (originalCode) {
+        const ast = parser.parse(originalCode);
+        const newCommentMap = [];
         traverse(ast, {
             CallExpression: {
-                exit: function(path) {
-                    const loc = locToString(path.node.loc);
-                    if (!deepCbs[loc] && path.node.arguments.every(arg => !arg.type.includes('FunctionExpression'))) {
-                        const depth = findDepth(path);
-                        if (depth > 3) {
-                            path.addComment('leading', ` ${depth} nested callbacks, really? `);
-                            deepCbs[loc] = depth;
-                        }
-                    }
-                }
+                exit: (path) => countCallbacks(path, newCommentMap)
             }
         });
-        const output = generate(ast);
-        console.log(output.code);
-        fs.writeFile(__dirname + '/../testdata/results.js', output.code);
+        const newCode = insertComments(originalCode, newCommentMap);
+        fs.writeFile(__dirname + '/../testdata/results.js', newCode);
     }
 }
 
