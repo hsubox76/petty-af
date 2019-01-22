@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hsubox76/pettier.git"
+    "url": "git+https://github.com/hsubox76/petty-af.git"
   },
   "author": "Christina Holland",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hsubox76/pettier/issues"
+    "url": "https://github.com/hsubox76/petty-af/issues"
   },
-  "homepage": "https://github.com/hsubox76/pettier#readme",
+  "homepage": "https://github.com/hsubox76/petty-af#readme",
   "dependencies": {
     "@babel/parser": "^7.2.3",
     "@babel/traverse": "^7.2.3",
@@ -23,7 +23,7 @@
     "yargs": "^12.0.5"
   },
   "bin": {
-    "pettier": "./src/index.js"
+    "petty-af": "./src/index.js"
   },
   "files": [
     "/src"
