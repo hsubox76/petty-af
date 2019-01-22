@@ -2,14 +2,16 @@ const parser = require('@babel/parser');
 const traverse = require('@babel/traverse').default;
 const fs = require('fs-extra');
 const countCallbacks = require('./countCallbacks');
+const countFunctionLines = require('./countFunctionLines');
+const CommentMap = require('./CommentMap');
 
-function insertComments(originalCode, newCommentMap) {
+function insertComments(originalCode) {
     let codeLines = originalCode.split('\n');
     let newCodeLines = [];
     codeLines.forEach((originalLine, index) => {
         let offset = 1;
-        if (newCommentMap[index + offset]) {
-            const comments = newCommentMap[index + offset];
+        const comments = CommentMap.comments[index + offset];
+        if (comments) {
             const indentMatch = originalLine.match(/^(\s*)[^s]/);
             const indent = indentMatch ? indentMatch[1] : '';
             comments.forEach(comment => {
@@ -31,13 +33,13 @@ async function main() {
     }
     if (originalCode) {
         const ast = parser.parse(originalCode);
-        const newCommentMap = [];
         traverse(ast, {
             CallExpression: {
-                exit: (path) => countCallbacks(path, newCommentMap)
-            }
+                exit: (path) => countCallbacks(path)
+            },
+            FunctionDeclaration: (path) => countFunctionLines(path)
         });
-        const newCode = insertComments(originalCode, newCommentMap);
+        const newCode = insertComments(originalCode);
         fs.writeFile(__dirname + '/../testdata/results.js', newCode);
     }
 }

@@ -1,3 +1,5 @@
+const CommentMap = require('./CommentMap');
+
 function getCallbackDepth(path) {
     let parentPath = path.parentPath;
     let expressionCount = 0;
@@ -16,19 +18,14 @@ const callbackComments = {
     5: 'you know they got this thing called "promises" now',
 };
 
-function countCallbacks(path, newCommentMap) {
+function countCallbacks(path) {
     if (path.node.arguments.every(arg => !arg.type.includes('FunctionExpression'))) {
         const depth = getCallbackDepth(path);
         if (depth >= 3) {
             const comment = depth < 6
                 ? callbackComments[depth]
                 : 'Dante never imagined this many levels of callback hell';
-            // path.addComment('leading', ` ${comment} `, false);
-            const startLine = path.node.loc.start.line;
-            if (!newCommentMap[startLine]) {
-                newCommentMap[startLine] = [];
-            }
-            newCommentMap[startLine].push(comment);
+            CommentMap.addComment(path, comment);
         }
     }
 
