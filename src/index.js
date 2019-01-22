@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const parser = require('@babel/parser');
 const traverse = require('@babel/traverse').default;
 const fs = require('fs-extra');
