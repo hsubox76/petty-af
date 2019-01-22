@@ -9,36 +9,22 @@ are passive aggressive judgements about your coding style.
 
 ## Installing
 
-NOTE: Make sure to use the `@pettier` npm scope.  There was already an existing top-level package called pettier.
-It's okay!  We have no beef.
+To install, git clone this repo.
 
-In your repo:
+Within the repo run `yarn install` or `npm install`.
 
-```
-npm install @pettier/pettier
-```
-or
-```
-yarn add @pettier/pettier
-```
-
-Or you could globally install it (but why would you??):
-
-```
-npm install -g @pettier/pettier
-```
+There is currently no npm package available due to a naming conflict.
 
 ## Usage
 
-Locally
+From inside the repo:
+
 ```
-./node_modules/.bin/pettier [files]
+node ./src/index.js [files]
 ```
 
-Globally
-```
-pettier [files]
-```
+Or full path to index.js.
+
 
 ### Option
 
