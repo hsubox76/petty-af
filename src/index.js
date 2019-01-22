@@ -1,6 +1,7 @@
 const parser = require('@babel/parser');
 const traverse = require('@babel/traverse').default;
 const fs = require('fs-extra');
+const argv = require('yargs').argv;
 const countCallbacks = require('./countCallbacks');
 const countFunctionLines = require('./countFunctionLines');
 const CommentMap = require('./CommentMap');
@@ -24,10 +25,11 @@ function insertComments(originalCode) {
     return newCodeLines.join('\n');
 }
 
-async function main() {
+async function pettifyFile(filename) {
+    if (filename.includes('.pettified.')) return;
     let originalCode;
     try {
-        originalCode = await fs.readFile(__dirname + '/../testdata/testcode.js', 'utf8');
+        originalCode = await fs.readFile(filename, 'utf8');
     } catch(e) {
         console.error(e);
     }
@@ -40,8 +42,19 @@ async function main() {
             FunctionDeclaration: (path) => countFunctionLines(path)
         });
         const newCode = insertComments(originalCode);
-        fs.writeFile(__dirname + '/../testdata/results.js', newCode);
+        let outputFile = filename;
+        if (argv.copy) {
+            const pathParts = filename.split('.');
+            outputFile = [...pathParts.slice(0, -1), 'pettified', pathParts.slice(-1)].join('.');
+        }
+        console.log(outputFile);
+        fs.writeFile(outputFile, newCode);
     }
+}
+
+async function main() {
+    const files = argv._;
+    files.forEach(pettifyFile);
 }
 
 main();

@@ -3,7 +3,9 @@ const CommentMap = require('./CommentMap');
 function countFunctionLines (path) {
     const length = path.node.loc.end.line - path.node.loc.start.line;
     let comment;
-    if (length > 100 && length < 200) {
+    if (length < 100) {
+        return;
+    } else if (length < 200) {
         comment = `I wouldn't write a ${length} line function but you do you`;
     } else if (length < 500) {
         comment = `${length} lines? Is this a function or a Medium thinkpiece?`;
