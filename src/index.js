@@ -38,9 +38,7 @@ async function pettifyFile(filename) {
     if (originalCode) {
         const ast = parser.parse(originalCode);
         traverse(ast, {
-            CallExpression: {
-                exit: (path) => countCallbacks(path)
-            },
+            exit: (path) => countCallbacks(path),
             FunctionDeclaration: (path) => countFunctionLines(path)
         });
         const newCode = insertComments(originalCode);
@@ -49,8 +47,8 @@ async function pettifyFile(filename) {
             const pathParts = filename.split('.');
             outputFile = [...pathParts.slice(0, -1), 'pettified', pathParts.slice(-1)].join('.');
         }
-        console.log(outputFile);
         fs.writeFile(outputFile, newCode);
+        console.log('Wrote out ' + outputFile);
     }
 }
 

@@ -14,7 +14,8 @@ callbackCaller(() => {
     callbackCaller(() => {
         callbackCaller(() => {
             callbackCaller(() => {
-                callbackCaller();
+                var x = 1;
+                return x;
             });
         });
     });
@@ -26,7 +27,8 @@ callbackCaller(() => {
         callbackCaller(() => {
             callbackCaller(() => {
                 callbackCaller(() => {
-                    callbackCaller();
+                    var x = 1;
+                    return x;
                 });
             });
         });
